@@ -1,0 +1,6 @@
+xmlxl_env
+__pycache__
+*.pyc
+.flaskenv
+Site Design Files
+
