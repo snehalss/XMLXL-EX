@@ -4,7 +4,8 @@
 # This basically tells Flask what logic to execute when a client requests a given URL.
 
 from xmlxl import app
-from flask import request, render_template
+from flask import request, render_template, redirect, flash
+from xmlxl.forms import RegistrationForm
 
 # The term "app.route" is a decorator
 # The function 'index()' is called a 'view function' in MVC terminology.
@@ -56,6 +57,17 @@ def my_browser():
     return '<p>Your browser is {}</p>'.format(user_agent)
 
 
-
-
+# The 'register()' view function: 
+#   1. Loads the 'RegistrationForm()' from forms.py (see import directive at top of this file)
+#   2. Uses name.html template to render the form on given route (i.e. URI)
+@app.route('/register/', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    
+    if form.validate_on_submit():
+        flash(f'This is flash testing', 'info')
+        return redirect('/')
+    else: 
+        flash(f'This is flash error', 'danger')
+    return render_template('registration.html', title="Registration", form=form)
 
