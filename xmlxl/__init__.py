@@ -7,6 +7,9 @@ from flask import Flask
 from xmlxl.config import Config   # Importing Config class from config.py
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
+
 
 
 # This creates an application object that is an instance of the class Flask
@@ -16,6 +19,19 @@ app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
+
+PRICE_TABLE = [
+    [10,10,25,250, "First 10 at Rs. 25 each (10 x 25 = Rs. 250)"],
+    [10,100,20,2050, "Next 90 at Rs. 20 each (90 x 20 = Rs. 1,800)"],
+    [100,250,16,4450, "Next 150 at Rs. 16 each (150 x 16 = Rs. 2,400)"],
+    [250,500,12,7450, "Next 250 at Rs. 12 each (250 x 12 = Rs. 3,000)"],
+    [500,1000,9,11950, "Next 500 at Rs. 9 each (500 x 9 = Rs. 4,500)"],
+    [1000,2000,7,18950 ,"Next 1000 at Rs. 7 each (1000 x 7 = Rs. 7,000)"],
+    [2000,5000,5,33950, "Next 3000 at Rs. 5 each (3000 x 5 = Rs. 15,00)"],
+    [5000,10000,4,53950, "Next 5000 at Rs. 4 each (5000 x 4 = Rs. 20,000)"],
+]
 
 # Importhing the "routes" module 
 # The "routes" module is imported after declaring the 'app' variable above.

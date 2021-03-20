@@ -1,6 +1,21 @@
 from datetime import datetime
-from xmlxl import db
+from xmlxl import db, login_manager
 
+# Because Flask-Login knows nothing about databases, 
+# it needs the application's help in loading a user. 
+# For that reason, the extension expects that the 
+# application will configure a user loader function, 
+# that can be called to load a user given the ID.
+# The user loader is registered with Flask-Login with
+# the "@login_manager.user_loader" decorator. 
+# The id that Flask-Login passes to the function 
+# as an argument is going to be a string, 
+# so databases that use numeric IDs need to
+# convert the string to integer.
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(60), index=True, unique=True, nullable=False)

@@ -89,6 +89,7 @@
                 {{ form.company(class='form-control', placeholder='Company Name', max='60') }}
                 {% endif %}
             </div>
+            {#
             <div class="form-group">
                 {% if form.subscription_plans.errors %}
                 {{ form.subscription_plans(class='form-control is-invalid') }}
@@ -100,6 +101,129 @@
                 {% else %}
                 {{ form.subscription_plans(class='form-control') }}
                 {% endif %}
+            </div> 
+            #}
+            <fieldset class='form-group border p-2'>
+                <legend class='w-auto px-2'>How many records do you need to process?</legend>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="container">
+                            <p class="mt-1 border-bottom">
+                                Each XML record (i.e. file) generated is counted separately.
+                                You can buy as many as you need, from 10 to 10,000 records.
+                                For new registrants, we provide 10 XML records worth Rs. 250
+                                as a free trial.
+                            </p>
+                        </div>
+                        <div class="col-sm-12 col-lg-6 mb-2">
+                            {{ form.order_qty.label(class='form-control-label') }}
+                            {% if form.order_qty.errors %}
+                            {{ form.order_qty(class='form-control is-invalid', value='10') }}
+                            <div class='invalid-feedback'>
+                                {% for error in form.order_qty.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {{ form.order_qty(class='form-control', value='10') }}
+                            {% endif %}
+                        </div>
+                        <div class="col-sm-12 col-lg-6">
+                            <label for="amt">
+                                Amount in Rs. 
+
+                            </label>
+                            {% if form.amt.errors %}
+                            {{ form.amt(class='form-control is-invalid text-right', readonly="readonly", value='0') }}
+                            <div class='invalid-feedback'>
+                                {% for error in form.amt.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {{ form.amt(class='form-control text-right', readonly="readonly", value='0') }}
+                            {% endif %}
+                        </div>
+                        <div class="container text-muted">
+                            <small id='calc_formula'>
+
+                            </small>
+                        </div>
+                        <div class="container mt-4">
+                            <p class='display-5 text-center'>
+                                <strong>
+                                    <a class="price_collapse_rotate" data-toggle="collapse" href="#price_table" role="button"
+                                        aria-expanded="false" aria-controls="price_table">
+                                        <span class="p-2 text-light bg-secondary">
+                                            Check Price Information
+                                            <i class="bi bi-chevron-down"></i>
+                                        </span>
+                                    </a>
+                                </strong>
+                            </p>
+                            <div id='price_table' class='collapse'>
+                                <table class='table table-striped table-sm'>
+                                    <thead>
+                                        <tr>
+                                            <th class="w-50">No. of Recrods</th>
+                                            <th class="">Rate Per Record (Rs.)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="">First 10 Records</td>
+                                            <td class="">Rs. 25 (FREE for new registrations) </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="">11 to 100</td>
+                                            <td class="">20</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="">101 to 250</td>
+                                            <td class="">16</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="">251 to 500</td>
+                                            <td class="">12</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="">501 to 1000</td>
+                                            <td class="">9</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="">1001 to 2000</td>
+                                            <td class="">7</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="">2001 to 5000</td>
+                                            <td class="">5</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="">5001 to 10000</td>
+                                            <td class="">4</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="">Over 10000</td>
+                                            <td class="">Contact us</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <small class='text-muted'>
+                                    This is a tiered pricing model. For new registrations, the first 10 records are free as shown in the table.
+                                    The next 11 to 100 records would cost Rs. 20 each; the next 101 to 250 records will 
+                                    cost Rs. 16 each, and so on. So, for example, if you want to process 700 records, 
+                                    the total amount payable will be Rs. 9000: 
+                                    First 10 records for free + Next 90 records at Rs. 20 (=Rs. 1800) + Next 150 records 
+                                    at Rs. 16 (=Rs. 2400) + Next 250 records at Rs. 12 (=Rs. 3000) + Last 200 records at Rs. 9
+                                    (=Rs. 1800) i.e. Rs. 1800 + Rs. 2400 + Rs. 3000 + Rs. 1800 = Rs. 9000.
+                                </small>    
+                            </div>                    
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.i_agree(class='mr-2') }} <label for="i_agree">I agree to the <a href=""><u>terms and conditions</u></a>.</label>
             </div>
         </fieldset>
         <div class="form-group text-center">
@@ -107,4 +231,74 @@
         </div>
     </form>
 </div>
+{% endblock %}
+
+{% block script %}
+<script>
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+
+    var xns = {};
+    xns.price_table = JSON.parse('{{ price_table|tojson }}');
+
+    $('#order_qty').on('input', function() {
+        if (order_qty.value != parseInt(order_qty.value)) {
+            $('#amt').addClass('text-danger');
+            amt.value='ERROR';
+        }
+        else if (parseInt(order_qty.value) < 10 || parseInt(order_qty.value) > 10000) {
+            $('#amt').addClass('text-danger');
+            amt.value='ERROR';
+        } else {
+            $('#amt').removeClass('text-danger');
+            qty = parseInt(order_qty.value);
+            text_formula = ''
+            for(i=0;i<=xns.price_table.length;i++) {
+                if ((qty >= xns.price_table[i][0]) && (qty <= xns.price_table[i][1])) {
+                    price_table_index = i;
+                    break;
+                }
+                if (text_formula == "") {
+                    text_formula = xns.price_table[i][4];
+                } else {
+                    text_formula = text_formula + " + " + xns.price_table[i][4];
+                }
+            }
+            console.log(price_table_index)
+            base_rate = xns.price_table[i][2];
+            base_qty = xns.price_table[i][0]
+            if (qty > 10) {
+                cummulative_total = xns.price_table[i-1][3];
+            } else {
+                cummulative_total = 250;
+            }
+            amt.value = (cummulative_total + (qty - base_qty) * base_rate) - 250;
+            text_formula = text_formula 
+                + " + Last " 
+                + (qty - base_qty).toString() 
+                + " at Rs. " 
+                + base_rate.toString() 
+                + " each " 
+                + "(" 
+                + (qty - base_qty).toString() 
+                + " x " + base_rate.toString() 
+                + " = " 
+                + ((qty - base_qty) * base_rate).toString() + ")" 
+                + " &#8722; Rs. 250 off for new registrants = Rs. " 
+                + amt.value
+            if (qty == 10) {
+                text_formula = '';
+            }
+        }
+        if (amt.value == 'ERROR') {
+            text_formula='';
+        }
+        $('#calc_formula').html(text_formula);
+    });
+
+
+
+</script>
 {% endblock %}

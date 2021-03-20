@@ -3,9 +3,14 @@
 # View functions are mapped to one or more route URLs.
 # This basically tells Flask what logic to execute when a client requests a given URL.
 
-from xmlxl import app
+from xmlxl import app, bcrypt, db, PRICE_TABLE
 from flask import request, render_template, redirect, flash
 from xmlxl.forms import RegistrationForm
+from xmlxl.models import User
+from sqlalchemy.exc import IntegrityError
+
+import json
+
 
 # The term "app.route" is a decorator
 # The function 'index()' is called a 'view function' in MVC terminology.
@@ -63,11 +68,28 @@ def my_browser():
 @app.route('/register/', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
-    
-    if form.validate_on_submit():
-        flash(f'This is flash testing', 'info')
-        return redirect('/')
-    else: 
-        flash(f'This is flash error', 'danger')
-    return render_template('registration.html', title="Registration", form=form)
 
+
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        client_ip_addr = request.environ.get('HTTP_X_FORWARDED_FOR') or request.environ['REMOTE_ADDR']
+        user = User(
+            email = form.email.data,
+            password_hash = hashed_password,
+            verified = False,
+            first_name = form.first_name.data,
+            last_name = form.last_name.data,
+            ip_register = client_ip_addr,
+            company = form.company.data,
+            balance_qty = 10
+        )
+        db.session.add(user)
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'Account already exists! Please use this link to login.', 'danger')
+            return redirect('/')
+        flash(f'Account created successfully!', 'success')
+        return redirect('/')
+    return render_template('registration.html', title="Registration", form=form, price_table=PRICE_TABLE)

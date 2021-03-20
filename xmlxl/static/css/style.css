@@ -2374,3 +2374,18 @@ section {
 #main {
   padding-top: 120px;
 }
+
+::placeholder {
+  color: #ccc!important;
+}
+
+a.price_collapse_rotate[aria-expanded="false"] .bi-chevron-down::before {
+  transition: all 0.3s ease!important;
+  
+}
+
+a.price_collapse_rotate[aria-expanded="true"] .bi-chevron-down::before {
+  transition: all 0.3s ease!important;
+  transform: rotate(180deg)!important;
+}
+
