@@ -2389,3 +2389,7 @@ a.price_collapse_rotate[aria-expanded="true"] .bi-chevron-down::before {
   transform: rotate(180deg)!important;
 }
 
+.error {
+  font-size: 13px;
+  color: red;
+}

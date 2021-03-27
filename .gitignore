@@ -4,3 +4,4 @@ __pycache__
 .flaskenv
 Site Design Files
 xmlxl.db
+*.code-workspace

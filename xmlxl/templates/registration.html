@@ -2,7 +2,7 @@
 
 {% block main %}
 <div class="container col-lg-4 col-sm-12">
-    <form method="POST" novalidate>
+    <form method="POST" id='register' name="register" novalidate>
         <!-- SECRET_KEY is used below -->
         {{ form.hidden_tag() }}
         <fieldset class='form-group'>
@@ -13,40 +13,40 @@
                 <div class="row">
                     <div class="col-sm-12 col-lg-6 mb-2">
                         {% if form.first_name.errors %}
-                        {{ form.first_name(class='form-control is-invalid', placeholder='First Name', min='1', max='40') }}
+                        {{ form.first_name(class='form-control is-invalid', placeholder='First Name', minlength='1', maxlength='40') }}
                         <div class='invalid-feedback'>
                             {% for error in form.first_name.errors %}
                             <span>{{ error }}</span>
                             {% endfor %}
                         </div>
                         {% else %}
-                        {{ form.first_name(class='form-control', placeholder='First Name', min='1', max='40') }}
+                        {{ form.first_name(class='form-control', placeholder='First Name', minlength='1', maxlength='40') }}
                         {% endif %}
                     </div>
                     <div class="col-sm-12 col-lg-6">
                         {% if form.last_name.errors %}
-                        {{ form.last_name(class='form-control is-invalid', placeholder='Last Name', min='1', max='40') }}
+                        {{ form.last_name(class='form-control is-invalid', placeholder='Last Name', minlength='1', maxlength='40') }}
                         <div class='invalid-feedback'>
                             {% for error in form.last_name.errors %}
                             <span>{{ error }}</span>
                             {% endfor %}
                         </div>
                         {% else %}
-                        {{ form.last_name(class='form-control', placeholder='Last Name', min='1', max='40') }}
+                        {{ form.last_name(class='form-control', placeholder='Last Name', minlength='1', maxlength='40') }}
                         {% endif %}
                     </div>
                 </div>
             </div>
             <div class="form-group">
                 {% if form.email.errors %}
-                {{ form.email(class='form-control is-invalid', placeholder='Your Email Address', max='60') }}
+                {{ form.email(class='form-control is-invalid', placeholder='Your Email Address', maxlength='60') }}
                 <div class='invalid-feedback'>
                     {% for error in form.email.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.email(class='form-control', placeholder='Your Email Address', max='60') }}
+                {{ form.email(class='form-control', placeholder='Your Email Address', maxlength='60') }}
                 {% endif %}
             </div>
             <div class="form-group">
@@ -79,14 +79,14 @@
             </div>
             <div class="form-group">
                 {% if form.company.errors %}
-                {{ form.company(class='form-control is-invalid', placeholder='Company Name', max='60') }}
+                {{ form.company(class='form-control is-invalid', placeholder='Company Name', maxlength='60') }}
                 <div class='invalid-feedback'>
                     {% for error in form.company.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.company(class='form-control', placeholder='Company Name', max='60') }}
+                {{ form.company(class='form-control', placeholder='Company Name', maxlength='60') }}
                 {% endif %}
             </div>
             {#
@@ -118,20 +118,19 @@
                         <div class="col-sm-12 col-lg-6 mb-2">
                             {{ form.order_qty.label(class='form-control-label') }}
                             {% if form.order_qty.errors %}
-                            {{ form.order_qty(class='form-control is-invalid', value='10') }}
+                            {{ form.order_qty(class='form-control is-invalid') }}
                             <div class='invalid-feedback'>
                                 {% for error in form.order_qty.errors %}
                                 <span>{{ error }}</span>
                                 {% endfor %}
                             </div>
                             {% else %}
-                            {{ form.order_qty(class='form-control', value='10') }}
+                            {{ form.order_qty(class='form-control') }}
                             {% endif %}
                         </div>
                         <div class="col-sm-12 col-lg-6">
                             <label for="amt">
                                 Amount in Rs. 
-
                             </label>
                             {% if form.amt.errors %}
                             {{ form.amt(class='form-control is-invalid text-right', readonly="readonly", value='0') }}
@@ -223,7 +222,18 @@
                 </div>
             </fieldset>
             <div class="form-group">
-                {{ form.i_agree(class='mr-2') }} <label for="i_agree">I agree to the <a href=""><u>terms and conditions</u></a>.</label>
+                {{ form.i_agree(class='mr-2') }} 
+                <label class='mb-0' for="i_agree">
+                    I agree to the 
+                    <a href=""><u>terms and conditions</u></a>
+                    and the <a href=""><u>privacy policy.</a></u>
+                </label>
+                <label class='mb-0 error' generated='true' for='i_agree'></</label>>
+                {% if form.i_agree.errors %}
+                    {% for error in form.i_agree.errors %}
+                    <small class='text-danger'><br>{{ error }}</small>
+                    {% endfor %}
+                {% endif %}
             </div>
         </fieldset>
         <div class="form-group text-center">
@@ -235,10 +245,6 @@
 
 {% block script %}
 <script>
-
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
 
     var xns = {};
     xns.price_table = JSON.parse('{{ price_table|tojson }}');
@@ -298,7 +304,54 @@
         $('#calc_formula').html(text_formula);
     });
 
-
+    $("#register").validate({
+        rules: {
+            first_name: {
+                required: true,
+                minlength: 1,
+                maxlength: 40
+            },
+            last_name: {
+                required: true,
+                minlength: 1,
+                maxlength: 40
+            },
+            email: {
+                required: true,
+                maxlength: 60,
+                email: true,
+            },
+            password: {
+                required: true,
+                minlength: 6
+            },
+            confirm_password: {
+                required: true,
+                minlength: 6,
+                equalTo: "#password"
+            },
+            i_agree: {
+                required: true
+            }
+        },
+        messages : {
+            first_name: 'Please enter your first name',
+            last_name: 'Please enter your last name (surname)',
+            email: {
+                required: 'Please enter your email address.',
+                email: 'Please enter valid email address.',
+            },
+            password: {
+                required: 'Please enter a password',
+                minlength: 'Password must be at least six characters long.'
+            },
+            confirm_password: 'This value must be same as the password.',
+            i_agree: 'You must agree to the terms and conditions and our privacy policy before registering.'
+        },
+        submitHandler: function(form) {
+            form.submit();
+        }
+    });
 
 </script>
 {% endblock %}

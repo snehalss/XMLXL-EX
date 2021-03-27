@@ -69,7 +69,6 @@ def my_browser():
 def register():
     form = RegistrationForm()
 
-
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         client_ip_addr = request.environ.get('HTTP_X_FORWARDED_FOR') or request.environ['REMOTE_ADDR']
