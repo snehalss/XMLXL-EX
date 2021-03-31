@@ -21,7 +21,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(60), index=True, unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
-    verified = db.Column(db.Boolean(), nullable=False)
+    verified = db.Column(db.Boolean(), nullable=False, default=False)
     first_name = db.Column(db.String(40), nullable=False)
     last_name = db.Column(db.String(40), nullable=False)
     date_register = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -41,7 +41,7 @@ class User(db.Model, UserMixin):
 class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ref_transact = db.Column(db.String(40), nullable=False, default="TEST TRANSACTION")
-    transaction_status = db.Column(db.String(40), nullable=False, default='UNKNOWN')
+    transaction_status = db.Column(db.String(40), nullable=False)
     date_transact = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     ip_transact = db.Column(db.String(45), nullable=False)
     purchase_qty = db.Column(db.Integer, nullable=False)
