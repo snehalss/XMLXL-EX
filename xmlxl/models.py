@@ -1,5 +1,6 @@
 from datetime import datetime
 from xmlxl import db, login_manager
+from flask_login import UserMixin
 
 # Because Flask-Login knows nothing about databases, 
 # it needs the application's help in loading a user. 
@@ -16,7 +17,7 @@ from xmlxl import db, login_manager
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-class User(db.Model):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(60), index=True, unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
@@ -40,6 +41,7 @@ class User(db.Model):
 class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ref_transact = db.Column(db.String(40), nullable=False, default="TEST TRANSACTION")
+    transaction_status = db.Column(db.String(40), nullable=False, default='UNKNOWN')
     date_transact = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     ip_transact = db.Column(db.String(45), nullable=False)
     purchase_qty = db.Column(db.Integer, nullable=False)
@@ -54,3 +56,23 @@ class Transaction(db.Model):
             f"'{self.amt}')" 
         )
 
+class ExcelFile(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    upload_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    file_upload_name = db.Column(db.String(60), nullable=False)
+    file_name = db.Column(db.String(30), unique=True, nullable=False)
+    validation_status = db.Column(db.String(20), nullable=False)
+    is_valid = db.Column(db.Boolean(), nullable=False)
+    validation_report = db.Column(db.Text, nullable=False)
+    processing_status = db.Column(db.String(20), nullable=False)
+    is_processed = db.Column(db.Boolean(), nullable=False)
+    no_of_records = db.Column(db.Integer(), nullable=False, default=0)
+
+    def __repr__(self):
+        return (
+            f"File('{self.user_id}', "
+            f"'{self.upload_date}', " 
+            f"'{self.validation_status}', "
+            f"'{self.processing_status}')" 
+        )

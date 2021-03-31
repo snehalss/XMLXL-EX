@@ -5,3 +5,4 @@ __pycache__
 Site Design Files
 xmlxl.db
 *.code-workspace
+*.tmp

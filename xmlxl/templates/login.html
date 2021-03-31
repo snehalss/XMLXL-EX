@@ -1,0 +1,53 @@
+{% extends "template.html" %}
+
+{% block main %}
+<div class="container col-lg-3 col-sm-12 text-center">
+    <form method="POST" id='login' name="login" novalidate>
+        <!-- SECRET_KEY is used below -->
+        {{ form.hidden_tag() }}
+        <fieldset class='form-group'>
+            <legend class='border-bottom mb-4'>
+                <h1><strong>Log In</strong></h1>
+            </legend>
+            <div class="form-group">
+                {% if form.email.errors %}
+                {{ form.email(class='form-control is-invalid', placeholder='Your Email Address', maxlength='60') }}
+                <div class='invalid-feedback'>
+                    {% for error in form.email.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.email(class='form-control', placeholder='Your Email Address', maxlength='60') }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {% if form.password.errors %}
+                {{ form.password(class='form-control is-invalid', placeholder='Password') }}
+                <div class='invalid-feedback'>
+                    {% for error in form.password.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.password(class='form-control', placeholder='Password') }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.remember(class='', checked='checked') }} 
+                <label class='mb-0' for="remember">Remember Me</label>
+            </div>
+            <div class="form-group text-center">
+                {{ form.submit(class='btn btn-primary') }}
+            </div>
+        </fieldset>
+    </form>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+
+
+</script>
+{% endblock %}

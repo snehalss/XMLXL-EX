@@ -29,3 +29,9 @@ class RegistrationForm(FlaskForm):
         if i_agree.data == False:
             print(i_agree.data)
             raise ValidationError('You must agree to the terms and conditions and our privacy policy before registering.')
+
+class LoginForm(FlaskForm):
+    email = StringField(validators=[InputRequired(),Email()])
+    password = PasswordField(validators=[InputRequired()])
+    remember = BooleanField('Remember Me')
+    submit = SubmitField('Log In')

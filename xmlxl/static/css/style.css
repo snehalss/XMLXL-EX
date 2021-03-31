@@ -2393,3 +2393,18 @@ a.price_collapse_rotate[aria-expanded="true"] .bi-chevron-down::before {
   font-size: 13px;
   color: red;
 }
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 120px;
+}

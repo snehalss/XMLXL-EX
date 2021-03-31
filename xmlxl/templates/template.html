@@ -54,18 +54,19 @@
     <!-- ======= Header ======= -->
     <header id="header" class="header fixed-top bg-light">
         <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
-
             <a href="index.html" class="logo d-flex align-items-center">
                 <img src="../static/img/xmlxl.svg" alt="" type="image/svg+xml" height="60">
             </a>
-
             <nav id="navbar" class="navbar">
                 <ul>
-                    <li><a class="nav-link scrollto active" href="#hero">Home</a></li>
+                    <li><a class="nav-link scrollto active" href="{{ url_for('index') }}">Home</a></li>
                     <li><a class="nav-link scrollto" href="#pricing">Pricing</a></li>
-                    <li><a class="nav-link scrollto" href="#register">Register</a></li>
-                    <li><a class="nav-link scrollto" href="#login">Login</a></li>
-                    <li><a class="nav-link scrollto" href="#logout">Logout</a></li>
+                    {% if current_user.is_anonymous %}
+                    <li><a class="nav-link scrollto" href="{{ url_for('register') }}">Register</a></li>
+                    <li><a class="nav-link scrollto" href="{{ url_for('login') }}">Login</a></li>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
+                    <li><a class="nav-link scrollto" href="{{ url_for('logout') }}">Logout</a></li>
                     <li class="dropdown"><a href="#"><span>Account</span> <i class="bi bi-chevron-down"></i></a>
                         <ul>
                             <li><a href="#">Drop Down 1</a></li>
@@ -84,9 +85,14 @@
                             <li><a href="#">Drop Down 4</a></li>
                         </ul>
                     </li>
+                    {% endif %}
+
                     <li><a class="nav-link scrollto" href="#support">Support</a></li>
                     <li><a class="getstarted scrollto" href="#about">Get Started</a></li>
                 </ul>
+                {% if current_user.is_authenticated %}
+                <span class='text-info'><strong>&nbsp; Welcome {{ current_user.first_name + "!" }} &nbsp;</strong> </span>
+                {% endif %}
                 <i class="bi bi-list mobile-nav-toggle"></i>
             </nav><!-- .navbar -->
         </div>

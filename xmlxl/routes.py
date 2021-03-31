@@ -4,10 +4,11 @@
 # This basically tells Flask what logic to execute when a client requests a given URL.
 
 from xmlxl import app, bcrypt, db, PRICE_TABLE
-from flask import request, render_template, redirect, flash
-from xmlxl.forms import RegistrationForm
+from flask import request, render_template, redirect, flash, url_for
+from xmlxl.forms import RegistrationForm, LoginForm
 from xmlxl.models import User
 from sqlalchemy.exc import IntegrityError
+from flask_login import current_user, login_user, logout_user
 
 import json
 
@@ -92,3 +93,23 @@ def register():
         flash(f'Account created successfully!', 'success')
         return redirect('/')
     return render_template('registration.html', title="Registration", form=form, price_table=PRICE_TABLE)
+
+@app.route('/login/', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password_hash, form.password.data):
+            login_user(user, remember=form.remember.data)
+            return redirect(url_for('index'))
+        else:
+            flash('Login unsuccessful! Please check your credentials', 'danger')
+    return render_template('login.html', title='Log In', form=form)
+
+
+@app.route('/logout/')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
