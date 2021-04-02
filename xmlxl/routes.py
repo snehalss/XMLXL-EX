@@ -3,15 +3,19 @@
 # View functions are mapped to one or more route URLs.
 # This basically tells Flask what logic to execute when a client requests a given URL.
 
+import json
+import string
+import random
+import os
+
 from xmlxl import app, bcrypt, db, PRICE_TABLE
 from flask import request, render_template, redirect, flash, url_for
-from xmlxl.forms import RegistrationForm, LoginForm
-from xmlxl.models import User
+from xmlxl.forms import RegistrationForm, LoginForm, UploadForm
+from xmlxl.models import User, ExcelFile
 from sqlalchemy.exc import IntegrityError
-from flask_login import current_user, login_user, logout_user
-
-import json
-
+from flask_login import current_user, login_user, logout_user, login_required
+from datetime import datetime
+from pathlib import Path
 
 # The term "app.route" is a decorator
 # The function 'index()' is called a 'view function' in MVC terminology.
@@ -94,6 +98,7 @@ def register():
         return redirect('/')
     return render_template('registration.html', title="Registration", form=form, price_table=PRICE_TABLE)
 
+
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -105,7 +110,7 @@ def login():
             login_user(user, remember=form.remember.data)
             return redirect(url_for('index'))
         else:
-            flash('Login unsuccessful! Please check your credentials', 'danger')
+            flash(f'Login unsuccessful! Please check your credentials.', 'danger')
     return render_template('login.html', title='Log In', form=form)
 
 
@@ -113,3 +118,49 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+
+@app.route('/dashboard/')
+@login_required
+def dashboard():
+    return render_template('dashboard.html', title='Dashboard')
+
+
+@app.route('/upload/', methods=['GET', 'POST'])
+@login_required
+def upload():
+    form = UploadForm()
+    if form.validate_on_submit():
+        if request.method == 'POST':
+            uploaded_file = request.files['xl_file'] or None
+            if not uploaded_file:
+                flash(f'Please select a file to upload.', 'danger')
+            else:
+                file_ext = uploaded_file.filename.split('.')[1]
+                random_str = '' + ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+                timestamp_str = str(datetime.now().timestamp())
+                timestamp_str = timestamp_str.split('.')[0] + timestamp_str.split('.')[1]
+                file_name_new = random_str + '_' + timestamp_str.ljust((16 - len(timestamp_str)) + len(timestamp_str), '0') + '.' + file_ext
+                excelfile = ExcelFile(
+                    user_id = current_user.get_id(),
+                    file_upload_name = uploaded_file.filename,
+                    file_name = file_name_new,
+                    validation_status = False,
+                    is_valid = False,
+                    validation_report = '',
+                    processing_status = '',
+                    is_processed = False,
+                )
+                db.session.add(excelfile)
+                try:
+                    db.session.commit()
+                    file_path = os.path.join(app.root_path, 'Uploads', current_user.get_id())
+                    Path(file_path).mkdir(parents=True,exist_ok=True)
+                    uploaded_file.save(os.path.join(file_path, file_name_new))
+                    flash(f'File successfully uploaded.', 'info')
+                    return redirect(url_for('dashboard'))
+                except:
+                    db.session.rollback()
+                    flash(f'File could not be saved due to database error.', 'danger')
+
+    return render_template('upload.html', title='Upload Excel File', form=form)

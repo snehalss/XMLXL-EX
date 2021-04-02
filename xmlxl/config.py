@@ -16,3 +16,6 @@ class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'LTnW_Jlck84n6NQ6Mzbm3_VK372WLNnhqJfttxe076A'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'xmlxl.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    #Limiting file upload size to 5 MB
+    MAX_CONTENT_LENGTH = 1024 * 1024 * 5
+

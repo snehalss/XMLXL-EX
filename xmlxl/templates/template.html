@@ -88,7 +88,7 @@
                     {% endif %}
 
                     <li><a class="nav-link scrollto" href="#support">Support</a></li>
-                    <li><a class="getstarted scrollto" href="#about">Get Started</a></li>
+                    <li><a class="getstarted scrollto" href="{{ url_for('dashboard') }}">Dashboard</a></li>
                 </ul>
                 {% if current_user.is_authenticated %}
                 <span class='text-info'><strong>&nbsp; Welcome {{ current_user.first_name + "!" }} &nbsp;</strong> </span>

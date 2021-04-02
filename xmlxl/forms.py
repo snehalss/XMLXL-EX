@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, IntegerField
 from wtforms.validators import DataRequired, InputRequired, Email, Length, EqualTo, ValidationError, NumberRange
 from xmlxl.models import User
+from flask_wtf.file import FileField, FileAllowed
 
 class RegistrationForm(FlaskForm):
     first_name = StringField(validators=[InputRequired(), Length(min=1, max=40)])
@@ -35,3 +36,7 @@ class LoginForm(FlaskForm):
     password = PasswordField(validators=[InputRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Log In')
+
+class UploadForm(FlaskForm):
+    xl_file = FileField('Upload Excel File', validators=[FileAllowed(['xls', 'xlsx', 'xlsm'])])
+    submit = SubmitField('Upload')
