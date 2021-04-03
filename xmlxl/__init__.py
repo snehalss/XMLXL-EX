@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
-
+from celery import Celery
 
 
 # This creates an application object that is an instance of the class Flask
@@ -21,6 +21,10 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
+
+# Celery 
+celery = Celery(app.name, backend=app.config['CELERY_RESULT_BACKEND'], broker=app.config['CELERY_BROKER_URL'])
+# celery.conf.update(app.config)
 
 PRICE_TABLE = [
     [10,10,25,250, "First 10 at Rs. 25 each (10 x 25 = Rs. 250)"],

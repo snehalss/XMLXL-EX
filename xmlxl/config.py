@@ -16,6 +16,12 @@ class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'LTnW_Jlck84n6NQ6Mzbm3_VK372WLNnhqJfttxe076A'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'xmlxl.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    #Limiting file upload size to 5 MB
+    
+    # Limiting file upload size to 5 MB
     MAX_CONTENT_LENGTH = 1024 * 1024 * 5
+    
+    # Config Settings for Celery
+    # CELERY_BROKER_URL = 'amqp://celery:Local99@localhost:5672/celery_vhost'
+    CELERY_BROKER_URL = 'amqp://celery:Local99@127.0.0.1:5672/celery_vhost'
+    CELERY_RESULT_BACKEND = 'rpc://'
 

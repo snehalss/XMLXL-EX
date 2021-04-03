@@ -8,7 +8,7 @@ import string
 import random
 import os
 
-from xmlxl import app, bcrypt, db, PRICE_TABLE
+from xmlxl import app, bcrypt, db, PRICE_TABLE, celery_test
 from flask import request, render_template, redirect, flash, url_for
 from xmlxl.forms import RegistrationForm, LoginForm, UploadForm
 from xmlxl.models import User, ExcelFile
@@ -162,5 +162,11 @@ def upload():
                 except:
                     db.session.rollback()
                     flash(f'File could not be saved due to database error.', 'danger')
-
     return render_template('upload.html', title='Upload Excel File', form=form)
+
+@app.route('/celery_route/')
+def celery_route():
+    celery_test.test_task.delay(10,20)
+    return render_template('celery.html', title='Celery')
+
+
