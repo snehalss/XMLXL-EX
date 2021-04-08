@@ -154,7 +154,7 @@ def upload():
                 db.session.add(excelfile)
                 try:
                     db.session.commit()
-                    file_path = os.path.join(app.root_path, 'Uploads', current_user.get_id())
+                    file_path = os.path.join(app.root_path, 'uploads', current_user.get_id())
                     Path(file_path).mkdir(parents=True,exist_ok=True)
                     uploaded_file.save(os.path.join(file_path, file_name_new))
                     flash(f'File successfully uploaded.', 'info')

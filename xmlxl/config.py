@@ -22,6 +22,6 @@ class Config(object):
     
     # Config Settings for Celery
     # CELERY_BROKER_URL = 'amqp://celery:Local99@localhost:5672/celery_vhost'
-    CELERY_BROKER_URL = 'amqp://celery:Local99@127.0.0.1:5672/celery_vhost'
+    CELERY_BROKER_URL = 'amqp://xmlxlmq:Local@99@192.168.1.102:5672/xmlxl'
     CELERY_RESULT_BACKEND = 'rpc://'
 

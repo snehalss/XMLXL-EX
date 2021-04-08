@@ -6,4 +6,6 @@ Site Design Files
 xmlxl.db
 *.code-workspace
 *.tmp
-Uploads
+uploads
+LOGFILE
+uploads
